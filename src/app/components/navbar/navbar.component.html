@@ -1,0 +1,15 @@
+<nav class="app-navbar">
+  <ul class="app-navbar__list">
+    @for (link of links; track link.path) {
+      <li class="app-navbar__item">
+        <a
+          class="app-navbar__link"
+          [routerLink]="link.path"
+          routerLinkActive="app-navbar__link--active"
+        >
+          {{ link.label }}
+        </a>
+      </li>
+    }
+  </ul>
+</nav>

@@ -1,0 +1,111 @@
+<app-header />
+<app-navbar />
+
+<h1>Cierre Financiero</h1>
+
+<app-filters
+  [filters]="filtros"
+  (apply)="onAplicarFiltros($event)"
+  (clear)="onLimpiarFiltros($event)"
+/>
+
+<div class="secciones">
+  @for (seccion of secciones; track seccion.title) {
+    <section class="ventas">
+      <h2 class="ventas__title">{{ seccion.title }}</h2>
+
+      <div class="ventas__grid">
+        <app-kpi-card
+          class="ventas__full"
+          [title]="seccion.full.title"
+          [value]="seccion.full.value"
+          [currency]="seccion.full.currency"
+          [suffix]="seccion.full.suffix"
+          [monthName]="mesSeleccionado()"
+        />
+
+        @for (kpi of seccion.kpis; track kpi.title) {
+          <app-kpi-card
+            [title]="kpi.title"
+            [value]="kpi.value"
+            [currency]="kpi.currency"
+            [suffix]="kpi.suffix"
+            [monthName]="mesSeleccionado()"
+          />
+        }
+      </div>
+    </section>
+  }
+</div>
+
+<div class="graficas">
+  <app-time-series
+    title="Ventas mensuales"
+    [months]="meses"
+    [series]="ventasMensuales"
+    yAxisLabel="Valor"
+    [currency]="true"
+  />
+
+  <app-time-series
+    title="Gastos mensuales"
+    [months]="meses"
+    [series]="gastosMensuales"
+    yAxisLabel="Valor"
+    [currency]="true"
+  />
+
+  <app-time-series
+    title="Ventas y gastos acumulados mensuales"
+    [months]="meses"
+    [series]="acumuladoMensual"
+    yAxisLabel="Valor acumulado"
+    [currency]="true"
+    [showLegend]="true"
+  />
+</div>
+
+<section class="composicion">
+  <h2 class="composicion__title">Composición de gastos</h2>
+
+  <div class="composicion__grid">
+    <div class="composicion__col composicion__col--principal">
+      <app-pie-chart
+        title="Composición de gastos"
+        [data]="composicionGastos"
+        [showLegend]="true"
+        [showPercentages]="true"
+      />
+    </div>
+
+    <div class="composicion__col composicion__col--detalle">
+      <app-pie-chart
+        title="Composición de gastos fijos"
+        [data]="composicionGastosFijos"
+        [showLegend]="true"
+        [showPercentages]="true"
+      />
+
+      <app-pie-chart
+        title="Gastos variables"
+        [data]="composicionGastosVariables"
+        [showLegend]="true"
+        [showPercentages]="true"
+      />
+    </div>
+  </div>
+</section>
+
+<section class="tabla">
+  <app-table
+    title="Top clientes por mes"
+    [columns]="topClientesColumns"
+    [data]="topClientesMes"
+  />
+
+  <app-table
+    title="Top clientes por año"
+    [columns]="topClientesColumns"
+    [data]="topClientesAnio"
+  />
+</section>

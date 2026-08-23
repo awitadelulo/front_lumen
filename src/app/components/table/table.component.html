@@ -1,0 +1,36 @@
+<section class="table-card">
+  @if (title()) {
+    <h3 class="table-card__title">{{ title() }}</h3>
+  }
+
+  <div class="table-card__scroll">
+    <table class="table-card__table">
+      <thead>
+        <tr>
+          @for (column of columns(); track column.key) {
+            <th
+              class="table-card__th"
+              [class.table-card__cell--right]="isNumeric(column.type)"
+            >
+              {{ column.label }}
+            </th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @for (row of data(); track $index) {
+          <tr class="table-card__row">
+            @for (column of columns(); track column.key) {
+              <td
+                class="table-card__td"
+                [class.table-card__cell--right]="isNumeric(column.type)"
+              >
+                {{ format(row[column.key], column.type) }}
+              </td>
+            }
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</section>

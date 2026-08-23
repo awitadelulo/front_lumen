@@ -1,0 +1,18 @@
+<app-header />
+<app-navbar />
+
+<h1>Clientes</h1>
+
+<app-filters
+  [filters]="filtros"
+  (apply)="onAplicarFiltros($event)"
+  (clear)="onLimpiarFiltros($event)"
+/>
+
+<section class="clientes-contenido">
+  <app-table
+    title="Listado de clientes"
+    [columns]="clientesColumns"
+    [data]="clientesData"
+  />
+</section>

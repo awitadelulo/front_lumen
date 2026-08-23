@@ -1,0 +1,8 @@
+<figure class="pie-chart">
+  @if (title()) {
+    <figcaption class="pie-chart__title">{{ title() }}</figcaption>
+  }
+  <div class="pie-chart__canvas">
+    <canvas #canvas></canvas>
+  </div>
+</figure>

@@ -1,0 +1,20 @@
+<section class="file-list">
+  <h3 class="file-list__title">{{ title() }}</h3>
+
+  <ul class="file-list__items">
+    @for (file of files(); track file) {
+      <li>
+        <button
+          type="button"
+          class="file-list__item"
+          [class.file-list__item--active]="file === selectedFile()"
+          [attr.aria-pressed]="file === selectedFile()"
+          (click)="select(file)"
+        >
+          <span class="file-list__icon" aria-hidden="true">📄</span>
+          <span class="file-list__name" [title]="file">{{ file }}</span>
+        </button>
+      </li>
+    }
+  </ul>
+</section>

@@ -1,0 +1,67 @@
+.table-card {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 1.5rem;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+}
+
+.table-card__title {
+  margin: 0 0 1rem;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #1e3a5f;
+}
+
+.table-card__scroll {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.table-card__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.table-card__th {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-weight: 600;
+  color: #ffffff;
+  background-color: #1e3a5f;
+  white-space: nowrap;
+}
+
+.table-card__th:first-child {
+  border-top-left-radius: 8px;
+}
+
+.table-card__th:last-child {
+  border-top-right-radius: 8px;
+}
+
+.table-card__td {
+  padding: 0.75rem 1rem;
+  color: #0f172a;
+  border-bottom: 1px solid #e2e8f0;
+  white-space: nowrap;
+}
+
+.table-card__cell--right {
+  text-align: right;
+}
+
+.table-card__row {
+  transition: background-color 0.15s ease;
+}
+
+.table-card__row:hover {
+  background-color: #f8fafc;
+}
+
+.table-card__row:last-child .table-card__td {
+  border-bottom: none;
+}

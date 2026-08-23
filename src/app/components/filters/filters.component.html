@@ -1,0 +1,40 @@
+<section class="app-filters">
+  <span class="app-filters__title">Filtros</span>
+
+  <div class="app-filters__controls">
+    @for (filter of filters(); track filter.name) {
+      <label class="app-filters__field">
+        <span class="app-filters__label">{{ filter.label }}</span>
+        @if (filter.type === 'text') {
+          <input
+            class="app-filters__select"
+            type="text"
+            [placeholder]="filter.placeholder ?? ''"
+            [value]="values()[filter.name] ?? ''"
+            (input)="onChange(filter.name, $any($event.target).value)"
+          />
+        } @else {
+          <select
+            class="app-filters__select"
+            [value]="values()[filter.name] ?? ''"
+            (change)="onChange(filter.name, $any($event.target).value)"
+          >
+            <option value="">Todos</option>
+            @for (option of filter.options; track option.value) {
+              <option [value]="option.value">{{ option.label }}</option>
+            }
+          </select>
+        }
+      </label>
+    }
+  </div>
+
+  <div class="app-filters__actions">
+    <button type="button" class="app-filters__button app-filters__button--apply" (click)="onApply()">
+      Aplicar filtros
+    </button>
+    <button type="button" class="app-filters__button app-filters__button--clear" (click)="onClear()">
+      Limpiar
+    </button>
+  </div>
+</section>

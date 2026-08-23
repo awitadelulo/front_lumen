@@ -1,0 +1,52 @@
+.app-header {
+  display: flex;
+  align-items: center;
+  gap: 3.5rem;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 1.25rem 2rem;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+}
+
+.app-header__logo {
+  height: 74px;
+  width: auto;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.app-header__title {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #0f172a;
+  line-height: 1.2;
+}
+
+@media (max-width: 768px) {
+  .app-header {
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+  }
+
+  .app-header__logo {
+    height: 48px;
+  }
+
+  .app-header__title {
+    font-size: 1.4rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .app-header__logo {
+    height: 40px;
+  }
+
+  .app-header__title {
+    font-size: 1.1rem;
+  }
+}

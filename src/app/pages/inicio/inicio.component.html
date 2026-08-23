@@ -1,0 +1,62 @@
+<div class="inicio-container">
+  <!-- Sección Izquierda -->
+  <div class="columna-izquierda">
+    <img src="/logo_lumen.jpeg" alt="Logo Lumen Legal" class="logo-principal">
+  </div>
+
+  <!-- Sección Derecha -->
+  <div class="columna-derecha">
+    <!-- Contenido Superior -->
+    <div class="contenido-superior">
+      <h1 class="titulo-principal">Abogados especializados en propiedad intelectual.</h1>
+    </div>
+
+    <!-- Contenido Inferior -->
+    <div class="contenido-inferior">
+      <div class="info-bienvenida">
+        <h2 class="titulo-secundario">Bienvenido a Lumen Legal</h2>
+        <p class="descripcion">Gestión financiera y administrativa</p>
+      </div>
+
+      <!-- Menú de Navegación -->
+      <nav class="menu-navegacion">
+        <a 
+          routerLink="/inicio" 
+          routerLinkActive="activo"
+          [routerLinkActiveOptions]="{ exact: true }"
+          class="menu-item">
+          <span class="menu-icono">🏠</span>
+          <span class="menu-texto">Inicio</span>
+        </a>
+        <a 
+          routerLink="/cierre-financiero" 
+          routerLinkActive="activo"
+          class="menu-item">
+          <span class="menu-icono">📊</span>
+          <span class="menu-texto">Cierre Financiero</span>
+        </a>
+        <a 
+          routerLink="/presupuesto" 
+          routerLinkActive="activo"
+          class="menu-item">
+          <span class="menu-icono">💰</span>
+          <span class="menu-texto">Presupuesto</span>
+        </a>
+        <a 
+          routerLink="/clientes" 
+          routerLinkActive="activo"
+          class="menu-item">
+          <span class="menu-icono">👥</span>
+          <span class="menu-texto">Clientes</span>
+        </a>
+        <a 
+          routerLink="/ingresar-informacion" 
+          routerLinkActive="activo"
+          class="menu-item">
+          <span class="menu-icono">📝</span>
+          <span class="menu-texto">Ingresar Información</span>
+        </a>
+      </nav>
+    </div>
+  </div>
+</div>
