@@ -28,7 +28,7 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - run: pnpm exec ng build --base-href /lumen-legal/
+      - run: pnpm exec ng build --base-href /front_lumen/
 
       - uses: actions/configure-pages@v5
 
