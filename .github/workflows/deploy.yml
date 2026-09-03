@@ -34,7 +34,7 @@ jobs:
 
       - uses: actions/upload-pages-artifact@v4
         with:
-          path: ./dist/lumen-legal
+          path: ./dist/lumen-legal/browser
 
   deploy:
     needs: build
