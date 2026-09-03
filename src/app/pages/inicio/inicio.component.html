@@ -1,98 +1,119 @@
 <div class="inicio-container">
 
-  <!-- COLUMNA IZQUIERDA: Título + Login -->
+  <!-- COLUMNA IZQUIERDA: LOGO -->
   <div class="columna-izquierda">
-
-    <h1 class="titulo-principal">
-      Abogados especializados en propiedad intelectual.
-    </h1>
-
-    <div class="login-container">
-
-      <h2 class="titulo-login">
-        Iniciar Sesión
-      </h2>
-
-      <p class="descripcion-login">
-        Accede a tu cuenta de Lumen Legal
-      </p>
-
-      <form (ngSubmit)="login()" class="formulario-login">
-
-        <!-- Usuario -->
-        <div class="grupo-formulario">
-          <label for="usuario" class="etiqueta">
-            Usuario
-          </label>
-
-          <input
-            type="text"
-            id="usuario"
-            [(ngModel)]="usuario"
-            name="usuario"
-            class="input-campo"
-            placeholder="Ingresa tu usuario"
-            required
-          >
-        </div>
-
-        <!-- Contraseña -->
-        <div class="grupo-formulario">
-          <label for="password" class="etiqueta">
-            Contraseña
-          </label>
-
-          <input
-            type="password"
-            id="password"
-            [(ngModel)]="password"
-            name="password"
-            class="input-campo"
-            placeholder="Ingresa tu contraseña"
-            required
-          >
-        </div>
-
-        <!-- Mensaje de error -->
-        <div *ngIf="mostrarError" class="mensaje-error">
-          {{ mensajeError }}
-        </div>
-
-        <!-- Botones -->
-        <div class="grupo-botones">
-
-          <button
-            type="submit"
-            class="boton-login"
-          >
-            Iniciar Sesión
-          </button>
-
-          <button
-            type="button"
-            (click)="limpiarFormulario()"
-            class="boton-limpiar"
-          >
-            Limpiar
-          </button>
-
-        </div>
-
-      </form>
-
-    </div>
-
-  </div>
-
-
-  <!-- COLUMNA DERECHA: Imagen -->
-  <div class="columna-derecha">
 
     <img
       src="logo_lumen.jpeg"
       alt="Logo Lumen Legal"
       class="logo-principal"
     >
+
+  </div>
+
+
+  <!-- COLUMNA DERECHA: TÍTULO + LOGIN -->
+  <div class="columna-derecha">
+
+    <!-- TÍTULO ARRIBA -->
+    <div class="contenido-superior">
+
+      <h1 class="titulo-principal">
+        Abogados especializados en propiedad intelectual.
+      </h1>
+
+    </div>
+
+
+    <!-- LOGIN CENTRADO -->
+    <div class="contenido-inferior">
+
+      <div class="login-container">
+
+        <h2 class="titulo-login">
+          Iniciar Sesión
+        </h2>
+
+        <p class="descripcion-login">
+          Accede a tu cuenta de Lumen Legal
+        </p>
+
+        <form (ngSubmit)="login()" class="formulario-login">
+
+          <!-- Usuario -->
+          <div class="grupo-formulario">
+
+            <label for="usuario" class="etiqueta">
+              Usuario
+            </label>
+
+            <input
+              type="text"
+              id="usuario"
+              [(ngModel)]="usuario"
+              name="usuario"
+              class="input-campo"
+              placeholder="Ingresa tu usuario"
+              required
+            >
+
+          </div>
+
+
+          <!-- Contraseña -->
+          <div class="grupo-formulario">
+
+            <label for="password" class="etiqueta">
+              Contraseña
+            </label>
+
+            <input
+              type="password"
+              id="password"
+              [(ngModel)]="password"
+              name="password"
+              class="input-campo"
+              placeholder="Ingresa tu contraseña"
+              required
+            >
+
+          </div>
+
+
+          <!-- Mensaje de error -->
+          <div
+            *ngIf="mostrarError"
+            class="mensaje-error"
+          >
+            {{ mensajeError }}
+          </div>
+
+
+          <!-- Botones -->
+          <div class="grupo-botones">
+
+            <button
+              type="submit"
+              class="boton-login"
+            >
+              Iniciar Sesión
+            </button>
+
+            <button
+              type="button"
+              (click)="limpiarFormulario()"
+              class="boton-limpiar"
+            >
+              Limpiar
+            </button>
+
+          </div>
+
+        </form>
+
+      </div>
+
+    </div>
 
   </div>
 
