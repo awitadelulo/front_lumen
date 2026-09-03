@@ -1,10 +1,13 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, computed, signal } from '@angular/core';
+import { forkJoin } from 'rxjs';
 import { HeaderComponent } from '../../components/header/header.component';
 import { NavbarComponent } from '../../components/navbar/navbar.component';
 import {
   FilterConfig,
   FiltersComponent,
 } from '../../components/filters/filters.component';
+import { CatalogosService } from '../../services/catalogos.service';
+import { VisualizacionesService } from '../../services/visualizaciones.service';
 import {
   TableColumn,
   TableComponent,
@@ -23,52 +26,163 @@ import {
   templateUrl: './clientes.component.html',
   styleUrl: './clientes.component.css',
 })
-export class ClientesComponent {
-  private readonly anios: FilterConfig['options'] = [
-    { value: '2024', label: '2024' },
-    { value: '2025', label: '2025' },
-    { value: '2026', label: '2026' },
-  ];
+export class ClientesComponent implements OnInit {
+  constructor(
+    private readonly catalogosService: CatalogosService,
+    private readonly visualizacionesService: VisualizacionesService
+  ) {}
 
-  private readonly meses: FilterConfig['options'] = [
-    { value: '1', label: 'Enero' },
-    { value: '2', label: 'Febrero' },
-    { value: '3', label: 'Marzo' },
-    { value: '4', label: 'Abril' },
-    { value: '5', label: 'Mayo' },
-    { value: '6', label: 'Junio' },
-    { value: '7', label: 'Julio' },
-    { value: '8', label: 'Agosto' },
-    { value: '9', label: 'Septiembre' },
-    { value: '10', label: 'Octubre' },
-    { value: '11', label: 'Noviembre' },
-    { value: '12', label: 'Diciembre' },
-  ];
+  // los ids de catalogos/meses y catalogos/anos vienen en orden cronológico (1 = más antiguo),
+  // por eso se pueden comparar directamente como números para validar el rango
+  protected readonly errorRango = signal<string | null>(null);
+  protected readonly clientesData = signal<TableRow[]>([]);
 
-  protected readonly filtros: FilterConfig[] = [
-    { name: 'mesInicial', label: 'Mes inicial', type: 'select', options: this.meses },
-    { name: 'anioInicial', label: 'Año inicial', type: 'select', options: this.anios },
-    { name: 'mesFinal', label: 'Mes final', type: 'select', options: this.meses },
-    { name: 'anioFinal', label: 'Año final', type: 'select', options: this.anios },
+  protected readonly filtros = signal<FilterConfig[]>([
+    { name: 'mesInicial', label: 'Mes inicial', type: 'select', options: [] },
+    { name: 'anioInicial', label: 'Año inicial', type: 'select', options: [] },
+    { name: 'mesFinal', label: 'Mes final', type: 'select', options: [] },
+    { name: 'anioFinal', label: 'Año final', type: 'select', options: [] },
     {
       name: 'cliente',
       label: 'Cliente',
       type: 'select',
-      options: [
-        { value: 'cliente-a', label: 'Cliente A' },
-        { value: 'cliente-b', label: 'Cliente B' },
-        { value: 'cliente-c', label: 'Cliente C' },
-        { value: 'cliente-d', label: 'Cliente D' },
-      ],
+      searchable: true,
+      placeholder: 'Escribe el nombre del cliente...',
+      options: [],
     },
-    { name: 'nit', label: 'NIT', type: 'text', placeholder: 'Buscar por NIT' },
+    {
+      name: 'nit',
+      label: 'NIT',
+      type: 'select',
+      searchable: true,
+      placeholder: 'Escribe el NIT...',
+      options: [],
+    },
     {
       name: 'documento',
       label: 'Documento',
-      type: 'text',
-      placeholder: 'Buscar por documento',
+      type: 'select',
+      searchable: true,
+      placeholder: 'Escribe el documento...',
+      options: [],
     },
-  ];
+  ]);
+
+  ngOnInit(): void {
+    forkJoin({
+      anios: this.catalogosService.getAnios(),
+      meses: this.catalogosService.getMeses(),
+      clientes: this.catalogosService.getClientes(),
+      nits: this.catalogosService.getNits(),
+      documentos: this.catalogosService.getDocumentos(),
+    }).subscribe(({ anios, meses, clientes, nits, documentos }) => {
+      this.filtros.set([
+        { name: 'mesInicial', label: 'Mes inicial', type: 'select', options: meses },
+        { name: 'anioInicial', label: 'Año inicial', type: 'select', options: anios },
+        { name: 'mesFinal', label: 'Mes final', type: 'select', options: meses },
+        { name: 'anioFinal', label: 'Año final', type: 'select', options: anios },
+        {
+          name: 'cliente',
+          label: 'Cliente',
+          type: 'select',
+          searchable: true,
+          placeholder: 'Escribe el nombre del cliente...',
+          options: clientes,
+        },
+        {
+          name: 'nit',
+          label: 'NIT',
+          type: 'select',
+          searchable: true,
+          placeholder: 'Escribe el NIT...',
+          options: nits,
+        },
+        {
+          name: 'documento',
+          label: 'Documento',
+          type: 'select',
+          searchable: true,
+          placeholder: 'Escribe el documento...',
+          options: documentos,
+        },
+      ]);
+      // rango por defecto: todo el histórico disponible en el catálogo
+      const anioInicialDefault = anios[0]?.label ?? '';
+      const anioFinalDefault = anios.at(-1)?.label ?? '';
+      const mesInicialDefault = meses[0]?.label ?? '';
+      const mesFinalDefault = meses.at(-1)?.label ?? '';
+      this.cargarRegistros(
+        anioInicialDefault,
+        mesInicialDefault,
+        anioFinalDefault,
+        mesFinalDefault,
+        undefined,
+        undefined,
+        undefined,
+        true
+      );
+    });
+  }
+
+  private labelDe(filtro: string, id: string): string {
+    return this.filtros().find((f) => f.name === filtro)?.options?.find((o) => o.value === id)?.label ?? '';
+  }
+
+  // Fisher-Yates: toma N elementos al azar sin repetir
+  private muestraAleatoria(items: TableRow[], cantidad: number): TableRow[] {
+    const copia = [...items];
+    for (let i = copia.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [copia[i], copia[j]] = [copia[j], copia[i]];
+    }
+    return copia.slice(0, cantidad);
+  }
+
+  private cargarRegistros(
+    anioInicial: string,
+    mesInicial: string,
+    anioFinal: string,
+    mesFinal: string,
+    cliente?: string,
+    nit?: string,
+    documento?: string,
+    soloMuestra = false
+  ): void {
+    if (!anioInicial || !mesInicial || !anioFinal || !mesFinal) {
+      return;
+    }
+    this.visualizacionesService
+      .getRegistrosPorPeriodo(anioInicial, mesInicial, anioFinal, mesFinal, cliente, nit, documento)
+      .subscribe((registros) => {
+        const filas = registros.map((r) => ({
+          cliente: r.cliente ?? '',
+          nit: r.nit ?? '',
+          documento: r.documento ?? '',
+          mes: r.mes,
+          anio: r.ano,
+          valor: r.total,
+        }));
+        this.clientesData.set(soloMuestra ? this.muestraAleatoria(filas, 10) : filas);
+      });
+  }
+
+  // valida que el año/mes inicial no sea posterior al año/mes final (usando el orden de los ids)
+  private rangoValido(valores: Record<string, string>): boolean {
+    const anioInicial = Number(valores['anioInicial']);
+    const anioFinal = Number(valores['anioFinal']);
+    const mesInicial = Number(valores['mesInicial']);
+    const mesFinal = Number(valores['mesFinal']);
+    if (!anioInicial || !anioFinal || !mesInicial || !mesFinal) {
+      return true;
+    }
+    if (anioInicial > anioFinal) {
+      return false;
+    }
+    if (anioInicial === anioFinal && mesInicial > mesFinal) {
+      return false;
+    }
+    return true;
+  }
 
   protected readonly clientesColumns: TableColumn[] = [
     { key: 'cliente', label: 'Cliente', type: 'text' },
@@ -79,47 +193,44 @@ export class ClientesComponent {
     { key: 'valor', label: 'Valor', type: 'currency' },
   ];
 
-  protected readonly clientesData: TableRow[] = [
-    {
-      cliente: 'Cliente A',
-      nit: '900123456-1',
-      documento: '1020304050',
-      mes: 'Enero',
-      anio: '2026',
-      valor: 3500000,
-    },
-    {
-      cliente: 'Cliente B',
-      nit: '901654321-2',
-      documento: '1030405060',
-      mes: 'Enero',
-      anio: '2026',
-      valor: 2800000,
-    },
-    {
-      cliente: 'Cliente C',
-      nit: '902987654-3',
-      documento: '1040506070',
-      mes: 'Febrero',
-      anio: '2026',
-      valor: 2200000,
-    },
-    {
-      cliente: 'Cliente D',
-      nit: '903456789-4',
-      documento: '1050607080',
-      mes: 'Febrero',
-      anio: '2026',
-      valor: 1500000,
-    },
-  ];
-
   protected onAplicarFiltros(valores: Record<string, string>): void {
     console.log('Filtros aplicados:', valores);
+    if (!this.rangoValido(valores)) {
+      this.errorRango.set(
+        'El rango de fechas no es válido: el mes/año inicial no puede ser posterior al final.'
+      );
+      return;
+    }
+    this.errorRango.set(null);
+    const anioInicial = this.labelDe('anioInicial', valores['anioInicial']);
+    const mesInicial = this.labelDe('mesInicial', valores['mesInicial']);
+    const anioFinal = this.labelDe('anioFinal', valores['anioFinal']);
+    const mesFinal = this.labelDe('mesFinal', valores['mesFinal']);
+    this.cargarRegistros(
+      anioInicial,
+      mesInicial,
+      anioFinal,
+      mesFinal,
+      valores['cliente'],
+      valores['nit'],
+      valores['documento']
+    );
   }
 
-  protected onLimpiarFiltros(valores: Record<string, string>): void {
-    console.log('Filtros limpiados:', valores);
+  protected onLimpiarFiltros(): void {
+    this.errorRango.set(null);
+    const anios = this.filtros().find((f) => f.name === 'anioInicial')?.options ?? [];
+    const meses = this.filtros().find((f) => f.name === 'mesInicial')?.options ?? [];
+    this.cargarRegistros(
+      anios[0]?.label ?? '',
+      meses[0]?.label ?? '',
+      anios.at(-1)?.label ?? '',
+      meses.at(-1)?.label ?? '',
+      undefined,
+      undefined,
+      undefined,
+      true
+    );
   }
 
   protected readonly archivos = [

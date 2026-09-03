@@ -11,52 +11,55 @@
       <h1 class="titulo-principal">Abogados especializados en propiedad intelectual.</h1>
     </div>
 
-    <!-- Contenido Inferior -->
+    <!-- Contenido Inferior - Formulario de Login -->
     <div class="contenido-inferior">
-      <div class="info-bienvenida">
-        <h2 class="titulo-secundario">Bienvenido a Lumen Legal</h2>
-        <p class="descripcion">Gestión financiera y administrativa</p>
-      </div>
+      <div class="login-container">
+        <h2 class="titulo-login">Iniciar Sesión</h2>
+        <p class="descripcion-login">Accede a tu cuenta de Lumen Legal</p>
 
-      <!-- Menú de Navegación -->
-      <nav class="menu-navegacion">
-        <a 
-          routerLink="/inicio" 
-          routerLinkActive="activo"
-          [routerLinkActiveOptions]="{ exact: true }"
-          class="menu-item">
-          <span class="menu-icono">🏠</span>
-          <span class="menu-texto">Inicio</span>
-        </a>
-        <a 
-          routerLink="/cierre-financiero" 
-          routerLinkActive="activo"
-          class="menu-item">
-          <span class="menu-icono">📊</span>
-          <span class="menu-texto">Cierre Financiero</span>
-        </a>
-        <a 
-          routerLink="/presupuesto" 
-          routerLinkActive="activo"
-          class="menu-item">
-          <span class="menu-icono">💰</span>
-          <span class="menu-texto">Presupuesto</span>
-        </a>
-        <a 
-          routerLink="/clientes" 
-          routerLinkActive="activo"
-          class="menu-item">
-          <span class="menu-icono">👥</span>
-          <span class="menu-texto">Clientes</span>
-        </a>
-        <a 
-          routerLink="/ingresar-informacion" 
-          routerLinkActive="activo"
-          class="menu-item">
-          <span class="menu-icono">📝</span>
-          <span class="menu-texto">Ingresar Información</span>
-        </a>
-      </nav>
+        <form (ngSubmit)="login()" class="formulario-login">
+          <!-- Campo Usuario -->
+          <div class="grupo-formulario">
+            <label for="usuario" class="etiqueta">Usuario</label>
+            <input
+              type="text"
+              id="usuario"
+              [(ngModel)]="usuario"
+              name="usuario"
+              class="input-campo"
+              placeholder="Ingresa tu usuario"
+              required>
+          </div>
+
+          <!-- Campo Contraseña -->
+          <div class="grupo-formulario">
+            <label for="password" class="etiqueta">Contraseña</label>
+            <input
+              type="password"
+              id="password"
+              [(ngModel)]="password"
+              name="password"
+              class="input-campo"
+              placeholder="Ingresa tu contraseña"
+              required>
+          </div>
+
+          <!-- Mensaje de Error -->
+          <div *ngIf="mostrarError" class="mensaje-error">
+            {{ mensajeError }}
+          </div>
+
+          <!-- Botones -->
+          <div class="grupo-botones">
+            <button type="submit" class="boton-login">
+              Iniciar Sesión
+            </button>
+            <button type="button" (click)="limpiarFormulario()" class="boton-limpiar">
+              Limpiar
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 </div>

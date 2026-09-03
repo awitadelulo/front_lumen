@@ -1,6 +1,4 @@
 <section class="app-filters">
-  <span class="app-filters__title">Filtros</span>
-
   <div class="app-filters__controls">
     @for (filter of filters(); track filter.name) {
       <label class="app-filters__field">
@@ -13,6 +11,33 @@
             [value]="values()[filter.name] ?? ''"
             (input)="onChange(filter.name, $any($event.target).value)"
           />
+        } @else if (filter.searchable) {
+          <div class="app-filters__combobox">
+            <input
+              class="app-filters__select"
+              type="text"
+              autocomplete="off"
+              [placeholder]="filter.placeholder ?? 'Escribe para buscar...'"
+              [value]="searchText()[filter.name] ?? ''"
+              (input)="onSearchInput(filter.name, $any($event.target).value)"
+              (focus)="onSearchFocus(filter.name)"
+              (blur)="onSearchBlur()"
+            />
+            @if (openDropdown() === filter.name) {
+              <ul class="app-filters__dropdown">
+                @for (option of filteredOptions(filter); track option.value) {
+                  <li
+                    class="app-filters__dropdown-item"
+                    (mousedown)="$event.preventDefault(); onSelectOption(filter.name, option)"
+                  >
+                    {{ option.label }}
+                  </li>
+                } @empty {
+                  <li class="app-filters__dropdown-empty">Sin resultados</li>
+                }
+              </ul>
+            }
+          </div>
         } @else {
           <select
             class="app-filters__select"

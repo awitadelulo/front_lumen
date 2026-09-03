@@ -1,18 +1,24 @@
 <app-header />
 <app-navbar />
 
-<h1>Clientes</h1>
+<main class="pagina">
+  <h1>Clientes</h1>
 
-<app-filters
-  [filters]="filtros"
-  (apply)="onAplicarFiltros($event)"
-  (clear)="onLimpiarFiltros($event)"
-/>
-
-<section class="clientes-contenido">
-  <app-table
-    title="Listado de clientes"
-    [columns]="clientesColumns"
-    [data]="clientesData"
+  <app-filters
+    [filters]="filtros()"
+    (apply)="onAplicarFiltros($event)"
+    (clear)="onLimpiarFiltros()"
   />
-</section>
+
+  @if (errorRango()) {
+    <p class="clientes-error">{{ errorRango() }}</p>
+  }
+
+  <section class="clientes-contenido">
+    <app-table
+      title="Listado de clientes"
+      [columns]="clientesColumns"
+      [data]="clientesData()"
+    />
+  </section>
+</main>

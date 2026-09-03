@@ -1,19 +1,45 @@
 <section class="file-list">
   <h3 class="file-list__title">{{ title() }}</h3>
 
-  <ul class="file-list__items">
-    @for (file of files(); track file) {
-      <li>
+  <ul class="file-list__years">
+    @for (archivo of archivos(); track archivo.nombreArchivo) {
+      <li class="file-list__year">
         <button
           type="button"
-          class="file-list__item"
-          [class.file-list__item--active]="file === selectedFile()"
-          [attr.aria-pressed]="file === selectedFile()"
-          (click)="select(file)"
+          class="file-list__year-header"
+          [class.file-list__year-header--active]="archivo.nombreArchivo === selectedFile()"
+          [attr.aria-expanded]="expandido() === archivo.nombreArchivo"
+          (click)="toggle(archivo.nombreArchivo)"
         >
-          <span class="file-list__icon" aria-hidden="true">📄</span>
-          <span class="file-list__name" [title]="file">{{ file }}</span>
+          <span>Información {{ archivo.anio }}</span>
+          <span
+            class="file-list__chevron"
+            [class.file-list__chevron--open]="expandido() === archivo.nombreArchivo"
+            aria-hidden="true"
+            >▾</span
+          >
         </button>
+
+        @if (expandido() === archivo.nombreArchivo) {
+          <ul class="file-list__meses">
+            @for (mes of archivo.meses; track mes) {
+              <li>
+                <button
+                  type="button"
+                  class="file-list__mes-item"
+                  [class.file-list__mes-item--active]="isActivo(archivo, mes)"
+                  [attr.aria-pressed]="isActivo(archivo, mes)"
+                  (click)="select(archivo, mes)"
+                >
+                  <span class="file-list__mes-nombre">{{ mes }}</span>
+                  <span class="file-list__mes-archivo" [title]="archivo.nombreArchivo">{{
+                    archivo.nombreArchivo
+                  }}</span>
+                </button>
+              </li>
+            }
+          </ul>
+        }
       </li>
     }
   </ul>

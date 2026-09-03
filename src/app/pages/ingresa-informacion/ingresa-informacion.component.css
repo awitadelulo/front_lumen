@@ -1,3 +1,11 @@
+.pagina {
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 0 32px 50px;
+  box-sizing: border-box;
+}
+
 h1 {
   text-align: center;
   font-size: 2.75rem;
@@ -5,20 +13,20 @@ h1 {
 }
 
 .contenido-wrapper {
-  display: grid;
-  grid-template-columns: 1fr 2fr;
+  display: flex;
+  flex-direction: column;
   gap: 2rem;
   padding: 2rem;
   max-width: 1400px;
   margin: 0 auto;
 }
 
-.columna-izquierda {
+.seccion-archivos {
   display: flex;
   flex-direction: column;
 }
 
-.columna-derecha {
+.seccion-tabla {
   display: flex;
   flex-direction: column;
 }
@@ -73,12 +81,12 @@ h1 {
 }
 
 .btn-agregar {
-  background-color: #2563eb;
+  background-color: #6F4E37;
   color: white;
 }
 
 .btn-agregar:hover {
-  background-color: #1d4ed8;
+  background-color: #5A3D2A;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 4px 12px rgba(111, 78, 55, 0.3);
 }

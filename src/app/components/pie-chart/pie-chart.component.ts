@@ -34,10 +34,10 @@ export class PieChartComponent implements OnDestroy {
 
   // Tonalidades corporativas diferenciables para las categorías.
   private readonly palette = [
-    '#2563EB',
-    '#1E3A5F',
-    '#60A5FA',
-    '#93C5FD',
+    '#6F4E37',
+    '#4E3524',
+    '#A9825F',
+    '#C9A876',
     '#0F172A',
     '#64748B',
   ];

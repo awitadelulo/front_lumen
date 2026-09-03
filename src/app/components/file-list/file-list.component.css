@@ -13,11 +13,12 @@
   padding-bottom: 0.75rem;
   font-size: 1.15rem;
   font-weight: 700;
-  color: #1e3a5f;
+  color: #4E3524;
+  text-align: center;
   border-bottom: 1px solid #e2e8f0;
 }
 
-.file-list__items {
+.file-list__years {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -26,43 +27,99 @@
   list-style: none;
 }
 
-.file-list__item {
+.file-list__year-header {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  justify-content: space-between;
   width: 100%;
   box-sizing: border-box;
   padding: 0.75rem 1rem;
   font-size: 0.95rem;
+  font-weight: 600;
   color: #0f172a;
   text-align: left;
   background-color: #ffffff;
-  border: 1px solid transparent;
+  border: 1px solid #e2e8f0;
   border-left: 3px solid transparent;
   border-radius: 8px;
   cursor: pointer;
   transition: background-color 0.15s ease, border-color 0.15s ease;
 }
 
-.file-list__item:hover {
+.file-list__year-header:hover {
   background-color: #f8fafc;
 }
 
-.file-list__item--active {
-  background-color: #f8fafc;
-  border-color: #e2e8f0;
-  border-left-color: #2563eb;
-  font-weight: 600;
-  color: #1e3a5f;
+.file-list__year-header--active {
+  border-left-color: #6F4E37;
+  color: #4E3524;
 }
 
-.file-list__icon {
+.file-list__chevron {
+  transition: transform 0.15s ease;
+  color: #64748b;
+}
+
+.file-list__chevron--open {
+  transform: rotate(180deg);
+}
+
+.file-list__meses {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin: 0.5rem 0 0;
+  padding: 0 0 0 1rem;
+  list-style: none;
+}
+
+.file-list__mes-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.85rem;
+  color: #334155;
+  text-align: left;
+  background-color: #ffffff;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.file-list__mes-item:hover {
+  background-color: #f1f5f9;
+}
+
+.file-list__mes-item--active {
+  background-color: #6F4E37;
+  border-color: #4E3524;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.file-list__mes-item--active:hover {
+  background-color: #5A3D2A;
+}
+
+.file-list__mes-nombre {
   flex-shrink: 0;
 }
 
-.file-list__name {
+.file-list__mes-archivo {
   flex: 1 1 auto;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  text-align: right;
+  color: #94a3b8;
+  font-size: 0.8rem;
+}
+
+.file-list__mes-item--active .file-list__mes-archivo {
+  color: #F0E4D8;
 }

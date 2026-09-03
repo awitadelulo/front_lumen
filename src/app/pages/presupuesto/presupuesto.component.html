@@ -1,58 +1,71 @@
 <app-header />
 <app-navbar />
 
-<h1>Presupuesto</h1>
+<main class="pagina">
+  <h1>Presupuesto</h1>
 
-<app-filters
-  [filters]="filtros"
-  (apply)="onAplicarFiltros($event)"
-  (clear)="onLimpiarFiltros($event)"
-/>
+  <app-filters
+    [filters]="filtros"
+    (apply)="onAplicarFiltros($event)"
+    (clear)="onLimpiarFiltros()"
+  />
 
-<section class="egresos">
-  <h2 class="egresos__title">Egresos</h2>
-
-  <div class="egresos__graficas">
-    <app-time-series
-      title="Gastos Real vs Presupuesto"
-      [months]="meses"
-      [series]="gastoRealVsPresupuesto"
-      yAxisLabel="Valor"
-      [currency]="true"
-      [showLegend]="true"
-    />
-
-    <app-time-series
-      title="Costos Real vs Presupuesto"
-      [months]="meses"
-      [series]="costosRealVsPresupuesto"
-      yAxisLabel="Valor"
-      [currency]="true"
-      [showLegend]="true"
-    />
+  <div class="acciones-modelo">
+    <button
+      type="button"
+      class="btn-reentrenar"
+      [disabled]="reentrenando()"
+      (click)="onReentrenarModelos()"
+    >
+      {{ reentrenando() ? 'Reentrenando modelos...' : 'Reentrenar modelos' }}
+    </button>
   </div>
-</section>
 
-<section class="ingresos">
-  <h2 class="ingresos__title">Ingresos</h2>
+  <section class="egresos">
+    <h2 class="egresos__title">Egresos</h2>
 
-  <div class="ingresos__graficas">
-    <app-time-series
-      title="Ingresos Fijos Real vs Esperado"
-      [months]="meses"
-      [series]="ingresosFijos"
-      yAxisLabel="Valor"
-      [currency]="true"
-      [showLegend]="true"
-    />
+    <div class="egresos__graficas">
+      <app-time-series
+        title="Gastos Real vs Presupuesto"
+        [months]="meses"
+        [series]="gastoRealVsPresupuesto()"
+        yAxisLabel="Valor"
+        [currency]="true"
+        [showLegend]="true"
+      />
 
-    <app-time-series
-      title="Ingresos Variables Real vs Esperado"
-      [months]="meses"
-      [series]="ingresosVariables"
-      yAxisLabel="Valor"
-      [currency]="true"
-      [showLegend]="true"
-    />
-  </div>
-</section>
+      <app-time-series
+        title="Costos Real vs Presupuesto"
+        [months]="meses"
+        [series]="costosRealVsPresupuesto()"
+        yAxisLabel="Valor"
+        [currency]="true"
+        [showLegend]="true"
+      />
+    </div>
+  </section>
+
+  <section class="ingresos">
+    <h2 class="ingresos__title">Ingresos</h2>
+
+    <div class="ingresos__graficas">
+      <app-time-series
+        title="Ingresos fijos Real vs Esperado"
+        [months]="meses"
+        [series]="ingresosFijos()"
+        yAxisLabel="Valor"
+        [currency]="true"
+        [showLegend]="true"
+      />
+
+      <app-time-series
+        title="Ingresos variables Real vs Esperado"
+        [months]="meses"
+        [series]="ingresosVariables()"
+        yAxisLabel="Valor"
+        [currency]="true"
+        [showLegend]="true"
+      />
+    </div>
+  </section>
+</main>

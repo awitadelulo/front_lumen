@@ -12,10 +12,13 @@ export class KpiCardComponent {
   readonly currency = input<string>('$');
   readonly suffix = input<string>('');
   readonly monthName = input<string>('');
+  // true para KPIs de egresos/gastos: invierte la lógica de color (aumento = rojo, disminución = verde)
+  readonly esEgreso = input<boolean>(false);
 
   protected readonly formattedValue = computed(() => {
     const amount = this.value();
-    const hasDecimals = !Number.isInteger(amount);
+    const esPorcentaje = this.suffix() === '%';
+    const hasDecimals = esPorcentaje && !Number.isInteger(amount);
     const formatted = new Intl.NumberFormat('es-CO', {
       minimumFractionDigits: 0,
       maximumFractionDigits: hasDecimals ? 2 : 0,
@@ -35,9 +38,7 @@ export class KpiCardComponent {
   protected readonly isPositive = computed(() => this.value() >= 0);
   protected readonly isNegative = computed(() => this.value() < 0);
 
-  protected readonly isExpense = computed(() => 
-    this.title().toLowerCase().includes('gasto')
-  );
+  protected readonly isExpense = computed(() => this.esEgreso());
 
   protected readonly shouldBeRed = computed(() => {
     const isExp = this.isExpense();

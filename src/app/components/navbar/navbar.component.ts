@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterLink, RouterLinkActive, Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-navbar',
@@ -10,10 +11,23 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 })
 export class NavbarComponent {
   protected readonly links = [
-    { label: 'Inicio', path: '/inicio' },
     { label: 'Cierre Financiero', path: '/cierre-financiero' },
     { label: 'Presupuesto', path: '/presupuesto' },
     { label: 'Clientes', path: '/clientes' },
     { label: 'Ingresar Información', path: '/ingresar-informacion' },
   ];
+
+  usuario: string | null = null;
+
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) {
+    this.usuario = this.authService.getUsuario();
+  }
+
+  logout() {
+    this.authService.logout();
+    this.router.navigate(['/inicio']);
+  }
 }

@@ -1,111 +1,200 @@
 <app-header />
 <app-navbar />
 
-<h1>Cierre Financiero</h1>
+<main class="pagina">
+  <h1>Cierre Financiero</h1>
 
-<app-filters
-  [filters]="filtros"
-  (apply)="onAplicarFiltros($event)"
-  (clear)="onLimpiarFiltros($event)"
-/>
+  <app-filters
+    [filters]="filtros()"
+    (apply)="onAplicarFiltros($event)"
+    (clear)="onLimpiarFiltros()"
+  />
 
-<div class="secciones">
-  @for (seccion of secciones; track seccion.title) {
-    <section class="ventas">
-      <h2 class="ventas__title">{{ seccion.title }}</h2>
+  <div class="secciones">
+    @for (seccion of secciones(); track seccion.title) {
+      <section class="seccion">
+        <h2 class="seccion__title">{{ seccion.title }}</h2>
 
-      <div class="ventas__grid">
-        <app-kpi-card
-          class="ventas__full"
-          [title]="seccion.full.title"
-          [value]="seccion.full.value"
-          [currency]="seccion.full.currency"
-          [suffix]="seccion.full.suffix"
-          [monthName]="mesSeleccionado()"
-        />
-
-        @for (kpi of seccion.kpis; track kpi.title) {
+        <div class="seccion__grid">
           <app-kpi-card
-            [title]="kpi.title"
-            [value]="kpi.value"
-            [currency]="kpi.currency"
-            [suffix]="kpi.suffix"
+            class="seccion__full"
+            [title]="seccion.full.title"
+            [value]="seccion.full.value"
+            [currency]="seccion.full.currency"
+            [suffix]="seccion.full.suffix"
             [monthName]="mesSeleccionado()"
+            [esEgreso]="seccion.title === 'Egresos'"
           />
-        }
-      </div>
-    </section>
-  }
-</div>
 
-<div class="graficas">
-  <app-time-series
-    title="Ventas mensuales"
-    [months]="meses"
-    [series]="ventasMensuales"
-    yAxisLabel="Valor"
-    [currency]="true"
-  />
+          @for (kpi of seccion.kpis; track kpi.title) {
+            <app-kpi-card
+              [title]="kpi.title"
+              [value]="kpi.value"
+              [currency]="kpi.currency"
+              [suffix]="kpi.suffix"
+              [monthName]="mesSeleccionado()"
+              [esEgreso]="seccion.title === 'Egresos'"
+            />
+          }
+        </div>
+      </section>
+    }
+  </div>
 
-  <app-time-series
-    title="Gastos mensuales"
-    [months]="meses"
-    [series]="gastosMensuales"
-    yAxisLabel="Valor"
-    [currency]="true"
-  />
+  <div class="graficas">
+    <app-time-series
+      title="Ingresos y Egresos Mensuales"
+      [months]="meses"
+      [series]="registroMensual()"
+      yAxisLabel="Valor"
+      [currency]="true"
+      [showLegend]="true"
+    />
 
-  <app-time-series
-    title="Ventas y gastos acumulados mensuales"
-    [months]="meses"
-    [series]="acumuladoMensual"
-    yAxisLabel="Valor acumulado"
-    [currency]="true"
-    [showLegend]="true"
-  />
-</div>
+    <app-time-series
+      title="Ingresos Fijos y variables"
+      [months]="meses"
+      [series]="ingresosFijosYVariables()"
+      yAxisLabel="Valor"
+      [currency]="true"
+      [showLegend]="true"
+    />
+
+    <app-time-series
+      title="Egresos Fijos y variables"
+      [months]="meses"
+      [series]="egresosFijosYVariables()"
+      yAxisLabel="Valor"
+      [currency]="true"
+      [showLegend]="true"
+    />
+    console.log('Egreso variable:', this.registroEgresoVario());
+
+    <app-time-series
+      title="Ingresos y egresos acumulados mensuales"
+      [months]="meses"
+      [series]="acumuladoMensualReal()"
+      yAxisLabel="Valor acumulado"
+      [currency]="true"
+      [showLegend]="true"
+    />
+  </div>
 
 <section class="composicion">
-  <h2 class="composicion__title">Composición de gastos</h2>
+  <h2 class="composicion__title">Composición de egresos</h2>
 
   <div class="composicion__grid">
-    <div class="composicion__col composicion__col--principal">
+
+    <!-- 1. TABLA -->
+    <div class="composicion__sector tabla-carrusel">
+
+  <div class="tabla-carrusel__header">
+
+    <button
+      type="button"
+      class="tabla-carrusel__arrow"
+      (click)="anteriorTabla()"
+    >
+      ‹
+    </button>
+
+    @switch (tablaComposicionActual()) {
+
+      @case (0) {
+        <h3>Composición de egresos</h3>
+      }
+
+      @case (1) {
+        <h3>Composición de egresos fijos</h3>
+      }
+
+      @case (2) {
+        <h3>Composición de egresos variables</h3>
+      }
+
+    }
+
+    <button
+      type="button"
+      class="tabla-carrusel__arrow"
+      (click)="siguienteTabla()"
+    >
+      ›
+    </button>
+
+  </div>
+
+  @switch (tablaComposicionActual()) {
+
+    @case (0) {
+      <app-table
+        [columns]="composicionEgresosColumns"
+        [data]="composicionEgresosTabla()"
+      />
+    }
+
+    @case (1) {
+      <app-table
+        [columns]="composicionEgresosColumns"
+        [data]="composicionEgresosFijosTabla()"
+      />
+    }
+
+    @case (2) {
+      <app-table
+        [columns]="composicionEgresosColumns"
+        [data]="composicionEgresosVariablesTabla()"
+      />
+    }
+
+  }
+
+</div>
+
+    <!-- 2. DIAGRAMA -->
+    <div class="composicion__sector">
       <app-pie-chart
-        title="Composición de gastos"
-        [data]="composicionGastos"
+        title="Composición de egresos"
+        [data]="composicionEgresos()"
         [showLegend]="true"
         [showPercentages]="true"
       />
     </div>
 
-    <div class="composicion__col composicion__col--detalle">
+    <!-- 3. DIAGRAMA -->
+    <div class="composicion__sector">
       <app-pie-chart
-        title="Composición de gastos fijos"
-        [data]="composicionGastosFijos"
-        [showLegend]="true"
-        [showPercentages]="true"
-      />
-
-      <app-pie-chart
-        title="Gastos variables"
-        [data]="composicionGastosVariables"
+        title="Composición de egresos fijos"
+        [data]="composicionEgresosFijos()"
         [showLegend]="true"
         [showPercentages]="true"
       />
     </div>
+
+    <!-- 4. DIAGRAMA -->
+    <div class="composicion__sector">
+      <app-pie-chart
+        title="Composición de egresos variables"
+        [data]="composicionEgresosVariables()"
+        [showLegend]="true"
+        [showPercentages]="true"
+      />
+    </div>
+
   </div>
 </section>
 
-<section class="tabla">
-  <app-table
-    title="Top clientes por mes"
-    [columns]="topClientesColumns"
-    [data]="topClientesMes"
-  />
+  <section class="tabla">
+    <app-table
+      title="Top clientes por mes"
+      [columns]="topClientesColumns"
+      [data]="topClientesMes()"
+    />
 
-  <app-table
-    title="Top clientes por año"
-    [columns]="topClientesColumns"
-    [data]="topClientesAnio"
-  />
-</section>
+    <app-table
+      title="Top clientes por año"
+      [columns]="topClientesColumns"
+      [data]="topClientesAnio()"
+    />
+  </section>
+</main>

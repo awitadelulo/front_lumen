@@ -12,12 +12,14 @@
   margin: 0 0 1rem;
   font-size: 1.15rem;
   font-weight: 700;
-  color: #1e3a5f;
+  color: #4E3524;
+  text-align: center;
 }
 
 .table-card__scroll {
   width: 100%;
-  overflow-x: auto;
+  max-height: 65vh;
+  overflow: auto;
 }
 
 .table-card__table {
@@ -27,11 +29,14 @@
 }
 
 .table-card__th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
   padding: 0.75rem 1rem;
   text-align: left;
   font-weight: 600;
   color: #ffffff;
-  background-color: #1e3a5f;
+  background-color: #4E3524;
   white-space: nowrap;
 }
 

@@ -1,10 +1,14 @@
 .app-navbar {
   width: 100%;
   box-sizing: border-box;
-  background-color: #1e3a5f;
+  background-color: #4E3524;
   border: 1px solid #e5e7eb;
   border-radius: 12px;
   box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
 }
 
 .app-navbar__list {
@@ -13,9 +17,10 @@
   justify-content: center;
   gap: 2.5rem;
   margin: 0;
-  padding: 0 2rem;
+  padding: 0;
   list-style: none;
   overflow-x: auto;
+  flex: 1;
 }
 
 .app-navbar__item {
@@ -26,7 +31,7 @@
   display: block;
   padding: 1rem 1.25rem;
   color: #f8fafc;
-  font-size: 1rem;
+  font-size: 1.2rem;
   font-weight: 500;
   text-decoration: none;
   white-space: nowrap;
@@ -36,30 +41,98 @@
 }
 
 .app-navbar__link:hover {
-  background-color: #2563eb;
+  background-color: #6F4E37;
   color: #ffffff;
 }
 
 .app-navbar__link--active {
   color: #ffffff;
-  border-bottom-color: #2563eb;
-  background-color: rgba(37, 99, 235, 0.25);
+  border-bottom-color: #6F4E37;
+  background-color: rgba(111, 78, 55, 0.25);
+}
+
+/* Sección de Usuario y Logout */
+.app-navbar__user-section {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.app-navbar__usuario {
+  color: #f8fafc;
+  font-size: 1.1rem;
+  font-weight: 500;
+  padding: 0.5rem 0.75rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+}
+
+.app-navbar__logout {
+  padding: 0.6rem 1.2rem;
+  background-color: #dc2626;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-size: 1.05rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+  white-space: nowrap;
+}
+
+.app-navbar__logout:hover {
+  background-color: #b91c1c;
+  transform: translateY(-2px);
+}
+
+.app-navbar__logout:active {
+  transform: translateY(0);
 }
 
 @media (max-width: 768px) {
+  .app-navbar {
+    flex-direction: column;
+    padding: 0.5rem 1rem;
+    gap: 0.5rem;
+  }
+
   .app-navbar__list {
-    padding: 0 1rem;
+    padding: 0;
+    width: 100%;
+    gap: 1.5rem;
   }
 
   .app-navbar__link {
     padding: 0.85rem 1rem;
     font-size: 0.9rem;
   }
+
+  .app-navbar__user-section {
+    width: 100%;
+    margin-left: 0;
+    justify-content: flex-end;
+  }
 }
 
 @media (max-width: 480px) {
+  .app-navbar {
+    padding: 0.5rem 0.75rem;
+  }
+
   .app-navbar__link {
     padding: 0.75rem 0.85rem;
     font-size: 0.85rem;
+  }
+
+  .app-navbar__usuario {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.6rem;
+  }
+
+  .app-navbar__logout {
+    padding: 0.5rem 0.9rem;
+    font-size: 0.8rem;
   }
 }

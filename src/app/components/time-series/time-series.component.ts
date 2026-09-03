@@ -35,7 +35,11 @@ export class TimeSeriesComponent implements OnDestroy {
   private chart?: Chart;
 
   // Tonalidades coherentes con la identidad visual para hasta 3 series.
-  private readonly palette = ['#2563EB', '#1E3A5F', '#60A5FA'];
+private readonly palette = [
+  '#3A7D44', // Café muy oscuro
+  '#C0392B', // Café rojizo
+  '#B8651B', // Café caramelo intenso
+];
 
   constructor() {
     effect(() => {

@@ -1,39 +1,54 @@
 <app-header />
 <app-navbar />
 
-<h1>Ingresar Información</h1>
+<main class="pagina">
+  <h1>Ingresar Información</h1>
 
-<section class="contenido-wrapper">
-  <div class="columna-izquierda">
-    <app-file-list
-      title="Archivos"
-      [files]="archivos()"
-      [(selectedFile)]="selectedFile"
-      (fileSelected)="onArchivoSeleccionado($event)"
-    />
-  </div>
-  <div class="columna-derecha">
-    @if (selectedFile(); as archivo) {
-      <app-table
-        [title]="archivo"
-        [columns]="tablaColumns"
-        [data]="tablaData"
+  <section class="contenido-wrapper">
+    <div class="seccion-archivos">
+      <app-file-list
+        title="Archivos"
+        [archivos]="archivos()"
+        [(selectedFile)]="selectedFile"
+        (fileSelected)="onArchivoSeleccionado($event)"
       />
-    } @else {
-      <div class="sin-seleccion">Selecciona un archivo para ver los detalles</div>
-    }
-  </div>
-</section>
+    </div>
 
-<section class="botones-accion">
-  <button
-    class="btn btn-eliminar"
-    [disabled]="!selectedFile()"
-    (click)="onEliminarDocumento()"
-  >
-    Eliminar Documento
-  </button>
-  <button class="btn btn-agregar" (click)="onAgregarDocumento()">
-    Agregar Documento
-  </button>
-</section>
+```
+<div class="seccion-tabla">
+  @if (selectedFile()) {
+    <app-table
+      [title]="tituloTabla()"
+      [columns]="tablaColumns"
+      [data]="tablaData()"
+    />
+  } @else {
+    <div class="sin-seleccion">
+      Selecciona un archivo para ver los detalles
+    </div>
+  }
+</div>
+```
+
+  </section>
+
+  <section class="botones-accion">
+    <button
+      class="btn btn-eliminar"
+      [disabled]="!selectedFile()"
+      (click)="onEliminarDocumento()"
+    >
+      Eliminar Documento
+    </button>
+
+```
+<button
+  class="btn btn-agregar"
+  (click)="onAgregarDocumento()"
+>
+  Agregar Documento
+</button>
+```
+
+  </section>
+</main>

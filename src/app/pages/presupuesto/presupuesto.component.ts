@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, computed, signal } from '@angular/core';
+import { forkJoin } from 'rxjs';
 import { HeaderComponent } from '../../components/header/header.component';
 import { NavbarComponent } from '../../components/navbar/navbar.component';
 import {
@@ -9,6 +10,11 @@ import {
   TimeSeries,
   TimeSeriesComponent,
 } from '../../components/time-series/time-series.component';
+import {
+  RegistroMensualDto,
+  VisualizacionesService,
+} from '../../services/visualizaciones.service';
+import { PrediccionesService } from '../../services/predicciones.service';
 
 @Component({
   selector: 'app-presupuesto',
@@ -17,7 +23,108 @@ import {
   templateUrl: './presupuesto.component.html',
   styleUrl: './presupuesto.component.css',
 })
-export class PresupuestoComponent {
+export class PresupuestoComponent implements OnInit {
+  protected readonly gastosRealApi = signal<RegistroMensualDto | null>(null);
+  protected readonly costosRealApi = signal<RegistroMensualDto | null>(null);
+  protected readonly ingresoFijoRealApi = signal<RegistroMensualDto | null>(null);
+  protected readonly ingresoVarioRealApi = signal<RegistroMensualDto | null>(null);
+  protected readonly gastosPrediccionApi = signal<Record<string, number> | null>(null);
+  protected readonly costosPrediccionApi = signal<Record<string, number> | null>(null);
+  protected readonly ingresoFijoPrediccionApi = signal<Record<string, number> | null>(null);
+  protected readonly ingresoVarioPrediccionApi = signal<Record<string, number> | null>(null);
+  protected readonly reentrenando = signal<boolean>(false);
+  private anioSeleccionado = this.anioActualLabel();
+
+  constructor(
+    private readonly visualizacionesService: VisualizacionesService,
+    private readonly prediccionesService: PrediccionesService
+  ) {}
+
+  ngOnInit(): void {
+    this.cargarGastosReal(this.anioActualLabel());
+    this.cargarCostosReal(this.anioActualLabel());
+    this.cargarIngresoFijoReal(this.anioActualLabel());
+    this.cargarIngresoVarioReal(this.anioActualLabel());
+    this.cargarGastosPrediccion(this.anioActualLabel());
+    this.cargarCostosPrediccion(this.anioActualLabel());
+    this.cargarIngresoFijoPrediccion(this.anioActualLabel());
+    this.cargarIngresoVarioPrediccion(this.anioActualLabel());
+  }
+
+  private anioActualLabel(): string {
+    return new Date().getFullYear().toString();
+  }
+
+  private cargarGastosReal(anio: string): void {
+    this.visualizacionesService
+      .getTotalPorClasificacionAnual(anio, 'GASTOS')
+      .subscribe((registro) => this.gastosRealApi.set(registro));
+  }
+
+  private cargarCostosReal(anio: string): void {
+    this.visualizacionesService
+      .getTotalPorClasificacionAnual(anio, 'COSTOS')
+      .subscribe((registro) => this.costosRealApi.set(registro));
+  }
+
+  private cargarIngresoFijoReal(anio: string): void {
+    this.visualizacionesService
+      .getRegistroIngresosPorTipo(anio, 'Ingreso fijo')
+      .subscribe((registro) => this.ingresoFijoRealApi.set(registro));
+  }
+
+  private cargarIngresoVarioReal(anio: string): void {
+    this.visualizacionesService
+      .getRegistroIngresosPorTipo(anio, 'Ingreso vario')
+      .subscribe((registro) => this.ingresoVarioRealApi.set(registro));
+  }
+
+  private cargarGastosPrediccion(anio: string): void {
+    this.prediccionesService
+      .getPredicciones('GASTOS', anio)
+      .subscribe((prediccion) => this.gastosPrediccionApi.set(prediccion));
+  }
+
+  private cargarCostosPrediccion(anio: string): void {
+    this.prediccionesService
+      .getPredicciones('COSTOS', anio)
+      .subscribe((prediccion) => this.costosPrediccionApi.set(prediccion));
+  }
+
+  private cargarIngresoFijoPrediccion(anio: string): void {
+    this.prediccionesService
+      .getPredicciones('Ingreso fijo', anio)
+      .subscribe((prediccion) => this.ingresoFijoPrediccionApi.set(prediccion));
+  }
+
+  private cargarIngresoVarioPrediccion(anio: string): void {
+    this.prediccionesService
+      .getPredicciones('Ingreso vario', anio)
+      .subscribe((prediccion) => this.ingresoVarioPrediccionApi.set(prediccion));
+  }
+
+  protected onReentrenarModelos(): void {
+    if (this.reentrenando()) {
+      return;
+    }
+    this.reentrenando.set(true);
+    forkJoin([
+      this.prediccionesService.recalcular('GASTOS'),
+      this.prediccionesService.recalcular('COSTOS'),
+      this.prediccionesService.recalcular('Ingreso fijo'),
+      this.prediccionesService.recalcular('Ingreso vario'),
+    ]).subscribe({
+      next: () => {
+        this.cargarGastosPrediccion(this.anioSeleccionado);
+        this.cargarCostosPrediccion(this.anioSeleccionado);
+        this.cargarIngresoFijoPrediccion(this.anioSeleccionado);
+        this.cargarIngresoVarioPrediccion(this.anioSeleccionado);
+        this.reentrenando.set(false);
+      },
+      error: () => this.reentrenando.set(false),
+    });
+  }
+
   protected readonly filtros: FilterConfig[] = [
     {
       name: 'anio',
@@ -29,33 +136,33 @@ export class PresupuestoComponent {
         { value: '2026', label: '2026' },
       ],
     },
-    {
-      name: 'mes',
-      label: 'Mes',
-      type: 'select',
-      options: [
-        { value: '1', label: 'Enero' },
-        { value: '2', label: 'Febrero' },
-        { value: '3', label: 'Marzo' },
-        { value: '4', label: 'Abril' },
-        { value: '5', label: 'Mayo' },
-        { value: '6', label: 'Junio' },
-        { value: '7', label: 'Julio' },
-        { value: '8', label: 'Agosto' },
-        { value: '9', label: 'Septiembre' },
-        { value: '10', label: 'Octubre' },
-        { value: '11', label: 'Noviembre' },
-        { value: '12', label: 'Diciembre' },
-      ],
-    },
   ];
 
   protected onAplicarFiltros(valores: Record<string, string>): void {
     console.log('Filtros aplicados:', valores);
+    if (valores['anio']) {
+      this.anioSeleccionado = valores['anio'];
+      this.cargarGastosReal(valores['anio']);
+      this.cargarCostosReal(valores['anio']);
+      this.cargarIngresoFijoReal(valores['anio']);
+      this.cargarIngresoVarioReal(valores['anio']);
+      this.cargarGastosPrediccion(valores['anio']);
+      this.cargarCostosPrediccion(valores['anio']);
+      this.cargarIngresoFijoPrediccion(valores['anio']);
+      this.cargarIngresoVarioPrediccion(valores['anio']);
+    }
   }
 
-  protected onLimpiarFiltros(valores: Record<string, string>): void {
-    console.log('Filtros limpiados:', valores);
+  protected onLimpiarFiltros(): void {
+    this.anioSeleccionado = this.anioActualLabel();
+    this.cargarGastosReal(this.anioActualLabel());
+    this.cargarCostosReal(this.anioActualLabel());
+    this.cargarIngresoFijoReal(this.anioActualLabel());
+    this.cargarIngresoVarioReal(this.anioActualLabel());
+    this.cargarGastosPrediccion(this.anioActualLabel());
+    this.cargarCostosPrediccion(this.anioActualLabel());
+    this.cargarIngresoFijoPrediccion(this.anioActualLabel());
+    this.cargarIngresoVarioPrediccion(this.anioActualLabel());
   }
 
   protected readonly meses = [
@@ -90,71 +197,39 @@ export class PresupuestoComponent {
     },
   ];
 
-  protected readonly gastoRealVsPresupuesto: TimeSeries[] = [
-    {
-      name: 'Gasto real',
-      data: [
-        45000, 52000, 66000, 58000, 72000, 82000, 78000, 92000, 84000, 94000,
-        102000, 112000,
-      ],
-    },
-    {
-      name: 'Gasto esperado',
-      data: [
-        50000, 55000, 62000, 60000, 70000, 80000, 82000, 88000, 90000, 95000,
-        100000, 108000,
-      ],
-    },
-  ];
+  protected readonly gastoRealVsPresupuesto = computed<TimeSeries[]>(() => {
+    const real = this.gastosRealApi();
+    const prediccion = this.gastosPrediccionApi();
+    return [
+      { name: 'Gasto real', data: this.meses.map((mes) => real?.[mes] ?? 0) },
+      { name: 'Gasto esperado', data: this.meses.map((mes) => prediccion?.[mes] ?? 0) },
+    ];
+  });
 
-  protected readonly costosRealVsPresupuesto: TimeSeries[] = [
-    {
-      name: 'Costo real',
-      data: [
-        30000, 35000, 44000, 40000, 50000, 55000, 52000, 62000, 58000, 64000,
-        70000, 75000,
-      ],
-    },
-    {
-      name: 'Costo esperado',
-      data: [
-        32000, 36000, 42000, 42000, 48000, 54000, 55000, 60000, 62000, 65000,
-        68000, 72000,
-      ],
-    },
-  ];
+  protected readonly costosRealVsPresupuesto = computed<TimeSeries[]>(() => {
+    const real = this.costosRealApi();
+    const prediccion = this.costosPrediccionApi();
+    return [
+      { name: 'Costo real', data: this.meses.map((mes) => real?.[mes] ?? 0) },
+      { name: 'Costo esperado', data: this.meses.map((mes) => prediccion?.[mes] ?? 0) },
+    ];
+  });
 
-  protected readonly ingresosFijos: TimeSeries[] = [
-    {
-      name: 'Ingresos fijos reales',
-      data: [
-        50000, 50000, 50000, 50000, 50000, 50000, 50000, 50000, 50000, 50000,
-        50000, 50000,
-      ],
-    },
-    {
-      name: 'Ingresos fijos esperados',
-      data: [
-        50000, 50000, 50000, 50000, 50000, 50000, 50000, 50000, 50000, 50000,
-        50000, 50000,
-      ],
-    },
-  ];
+  protected readonly ingresosFijos = computed<TimeSeries[]>(() => {
+    const real = this.ingresoFijoRealApi();
+    const prediccion = this.ingresoFijoPrediccionApi();
+    return [
+      { name: 'Ingresos fijos reales', data: this.meses.map((mes) => real?.[mes] ?? 0) },
+      { name: 'Ingresos fijos esperados', data: this.meses.map((mes) => prediccion?.[mes] ?? 0) },
+    ];
+  });
 
-  protected readonly ingresosVariables: TimeSeries[] = [
-    {
-      name: 'Ingresos variables reales',
-      data: [
-        40000, 55000, 80000, 65000, 95000, 110000, 100000, 125000, 118000,
-        135000, 145000, 170000,
-      ],
-    },
-    {
-      name: 'Ingresos variables esperados',
-      data: [
-        45000, 60000, 75000, 70000, 90000, 105000, 110000, 120000, 125000,
-        130000, 150000, 160000,
-      ],
-    },
-  ];
+  protected readonly ingresosVariables = computed<TimeSeries[]>(() => {
+    const real = this.ingresoVarioRealApi();
+    const prediccion = this.ingresoVarioPrediccionApi();
+    return [
+      { name: 'Ingresos variables reales', data: this.meses.map((mes) => real?.[mes] ?? 0) },
+      { name: 'Ingresos variables esperados', data: this.meses.map((mes) => prediccion?.[mes] ?? 0) },
+    ];
+  });
 }

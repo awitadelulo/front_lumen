@@ -1,8 +1,8 @@
 .app-filters {
   display: flex;
-  flex-wrap: wrap;
-  align-items: flex-end;
-  gap: 1rem 1.5rem;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
   box-sizing: border-box;
   width: 100%;
   padding: 1rem 1.5rem;
@@ -12,18 +12,12 @@
   box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
 }
 
-.app-filters__title {
-  flex-basis: 100%;
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: #1e3a5f;
-}
-
 .app-filters__controls {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 1rem;
-  flex: 1 1 auto;
+  width: 100%;
 }
 
 .app-filters__field {
@@ -33,10 +27,54 @@
   min-width: 160px;
 }
 
+.app-filters__combobox {
+  position: relative;
+}
+
+.app-filters__dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: 20;
+  min-width: 100%;
+  width: max-content;
+  max-width: 420px;
+  max-height: 280px;
+  overflow-y: auto;
+  margin: 0;
+  padding: 0.25rem 0;
+  list-style: none;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.1);
+}
+
+.app-filters__dropdown-item {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.9rem;
+  color: #0f172a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+
+.app-filters__dropdown-item:hover {
+  background-color: #f1f5f9;
+}
+
+.app-filters__dropdown-empty {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.85rem;
+  color: #94a3b8;
+}
+
 .app-filters__label {
-  font-size: 0.8rem;
+  font-size: 1.5rem;
   font-weight: 500;
-  color: #64748b;
+  color: #0f172a;
+  text-align: center;
 }
 
 .app-filters__select {
@@ -51,18 +89,19 @@
 }
 
 .app-filters__select:hover {
-  border-color: #2563eb;
+  border-color: #6F4E37;
 }
 
 .app-filters__select:focus {
   outline: none;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  border-color: #6F4E37;
+  box-shadow: 0 0 0 3px rgba(111, 78, 55, 0.15);
 }
 
 .app-filters__actions {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.75rem;
 }
 
@@ -78,13 +117,13 @@
 
 .app-filters__button--apply {
   color: #ffffff;
-  background-color: #2563eb;
-  border: 1px solid #2563eb;
+  background-color: #6F4E37;
+  border: 1px solid #6F4E37;
 }
 
 .app-filters__button--apply:hover {
-  background-color: #1e3a5f;
-  border-color: #1e3a5f;
+  background-color: #4E3524;
+  border-color: #4E3524;
 }
 
 .app-filters__button--clear {

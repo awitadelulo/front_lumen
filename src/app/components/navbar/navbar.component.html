@@ -12,4 +12,14 @@
       </li>
     }
   </ul>
+
+  <!-- Sección de Usuario y Logout -->
+  <div class="app-navbar__user-section">
+    @if (usuario) {
+      <span class="app-navbar__usuario">{{ usuario }}</span>
+    }
+    <button class="app-navbar__logout" (click)="logout()">
+      Cerrar Sesión
+    </button>
+  </div>
 </nav>
